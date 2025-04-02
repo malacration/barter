@@ -1,0 +1,15 @@
+::ng-deep .progress-red .p-progressbar-value {
+    background-color: red !important;
+}
+
+::ng-deep .progress-green .p-progressbar-value {
+    background-color: green !important;
+}
+
+.card{
+    padding: 0.8rem;
+}
+
+::ng-deep .border-red-500 {
+    border: 1px solid red !important;
+}

@@ -1,0 +1,126 @@
+<div *ngIf="loading" class="card flex flex-col gap-6 w-full items-center">
+    <p-progress-spinner *ngIf="!erroMessage" ariaLabel="loading" />
+    {{erroMessage}}
+</div>
+
+
+<div *ngIf="!loading" class="card flex flex-col gap-6 w-full">
+    <div class="font-semibold text-xl">Calculadora Barter</div>
+    <div class="flex flex-col md:flex-row gap-6">
+        <p-inputgroup>
+            <p-floatlabel variant="on">
+                <p-inputNumber [(ngModel)]="valorPrincipal" (ngModelChange)="changeValorPrincipal()" mode="currency" currency="BRL" locale="pt-BR"></p-inputNumber>
+                <label for="valorPrincipal">Valor do Bem</label>
+            </p-floatlabel>
+        </p-inputgroup>
+        <p-inputgroup>
+            <p-floatlabel variant="on">
+                <p-inputNumber [(ngModel)]="valorEncargos" mode="currency" currency="BRL" locale="pt-BR"></p-inputNumber>
+                <label for="valorEncargos">Outros Encargos (seguro, emplacamento etc..)</label>
+            </p-floatlabel>
+        </p-inputgroup>
+        <div class="w-full md:flex-row md:w-1/3">
+            <p-floatlabel variant="on">
+                <p-datepicker [iconDisplay]="'input'" [showIcon]="true" [showButtonBar]="true" [(ngModel)]="dataEntrega"></p-datepicker>
+                <label for="dataEntrega">Data Entrega</label>
+            </p-floatlabel>
+        </div>
+    </div>
+    
+    <div class="flex flex-col md:flex-row gap-6">
+        <div class="flex flex-col flex-1">
+            <p-inputgroup>
+                <p-floatlabel variant="on">
+                    <p-inputNumber [(ngModel)]="valorEntrada" (ngModelChange)="changeEntradaDinheiro()" mode="currency" currency="BRL" locale="pt-BR"></p-inputNumber>
+                     <label for="valorEntrada">Entrada à vista - dinheiro ou pix </label>
+                </p-floatlabel>
+            </p-inputgroup>
+        </div>
+        <div *ngIf="true" class="flex flex-col flex-1">
+            <p-inputgroup>
+                <p-floatlabel variant="on">
+                    <p-inputNumber [(ngModel)]="valorEntradaParcelado" mode="currency" currency="BRL" locale="pt-BR"></p-inputNumber>
+                    <label>Entrada parcelado - Cartão de crédito</label>
+                </p-floatlabel>
+                <p-inputgroup-addon 
+                    [style]="{'padding': 0}" 
+                    [classList]="['w-full','md:w-1/3']"
+                    [ngClass]="{'border-red-500': !isParceladoValido()}"
+                >
+                    <p-select 
+                        [(ngModel)]="numParcelaEntradaCartao"
+                        [style]="{'border': 'none', 'box-shadow': 'none', 'outline': 'none'}"
+                        [options]="parcelas" optionLabel="label" optionValue="value" placeholder="Parcelas" />
+                </p-inputgroup-addon>
+            </p-inputgroup>
+        </div>
+        <div class="flex flex-col md:flex-row items-center flex-1 gap-2">
+            <!-- Label que fica acima no mobile e ao lado no desktop -->
+            <label class="text-gray-700 font-semibold md:whitespace-nowrap">
+                Entrada
+            </label>
+            
+            <!-- Progress Bar -->
+            <p-progressbar 
+                [value]="percentualEntrada" 
+                [showValue]="true" 
+                [title]="'teste'"
+                class="w-full md:w-auto flex-1"
+                [ngClass]="{'progress-red': percentualEntrada < 20, 'progress-green': percentualEntrada >= 20}"
+            >
+            </p-progressbar>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-center">
+        <p-card [classList]="['p-0']" *ngIf="isFormularioValido()" class="w-fit h-fit min-w-128 mt-4 p-4 ">
+            <ng-template pTemplate="title"><h4><b>Detalhes pagamento Barter</b></h4></ng-template>
+            <ng-template pTemplate="content">
+                <div class="flex flex-col gap-3">
+                    <div class="flex justify-between gap-4">
+                        <span class="font-semibold">Entrada à vista - Dinheiro ou Pix</span>
+                        <span>{{valorEntrada.toFixed(2) | currency:'BRL' }}</span>
+                    </div>
+                    <div *ngIf="isParceladoValido() && numParcelaEntradaCartao != 0" class="flex justify-between gap-4">
+                        <span class="font-semibold">Cartão de crédito</span>
+                        <span>{{ (numParcelaEntradaCartao > 0 ? numParcelaEntradaCartao+'x ' : '')}} {{getValorParcela() | currency:'BRL' }}</span>
+                    </div>                    
+                    <div *ngIf="visualizaCalculo" class="flex justify-between gap-4">
+                        <span class="font-semibold">Encargos Cartão ({{(getTaxaCartao()*100).toFixed(2) + '%'}}):</span>
+                        <span>{{getEncargosCartao().toFixed(2) | currency:'BRL' }}</span>
+                    </div>
+                    <div *ngIf="visualizaCalculo && isParceladoValido() && numParcelaEntradaCartao != 0" class="flex justify-between gap-4">
+                        <span class="font-semibold">Encargo Antecipação ({{(getTaxaAntecipacao()*100).toFixed(2)}}%):</span>
+                        <span>{{getCustoAntecipacao() | currency:'BRL' }}</span>
+                    </div>
+                    <div *ngIf="visualizaCalculo" class="flex justify-between gap-4">
+                        <span class="font-semibold">Outros Encargos (seguro, emplacamento etc..)</span>
+                        <span>{{valorEncargos | currency:'BRL' }}</span>
+                    </div>
+                    <div *ngIf="visualizaCalculo" class="flex justify-between gap-4">
+                        <span class="font-semibold">Residual do bem</span>
+                        <span>{{getResidualPrincipal().toFixed(2) | currency:'BRL' }}</span>
+                    </div>
+                    <div *ngIf="visualizaCalculo" class="flex justify-between gap-4">
+                        <span class="font-semibold"><b>Total a Financiar</b></span>
+                        <span><b>{{getValorFinanciar().toFixed(2) | currency:'BRL'}}</b></span>
+                    </div>
+                    <p-divider *ngIf="visualizaCalculo" />
+                    <div *ngIf="visualizaCalculo" class="flex justify-between gap-4">
+                        <span class="font-semibold"><b>Total com juros ({{jurosAoMes*100}}% ao mes)</b></span>
+                        <span>{{getMontanteFinal().toFixed(2) | currency:'BRL'}}</span>
+                    </div>
+                    <div class="flex justify-between gap-4">
+                        <span class="font-semibold"><b>
+                            Sacas de soja entregue em {{ dataEntrega | date:'dd/MM/yyyy' }}
+                            {{visualizaCalculo ? 'R$ '+valorSaco+' ' : ''}}:
+                        </b></span>
+                        <span>{{getNumeroSacos().toFixed(0)}}</span>
+                    </div>
+                </div>
+            </ng-template>
+        </p-card>
+    </div>
+
+</div>
+

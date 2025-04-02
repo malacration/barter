@@ -12,7 +12,7 @@ import { LayoutService } from '../service/layout.service';
     imports: [RouterModule, CommonModule, StyleClassModule, AppConfigurator],
     template: ` <div class="layout-topbar">
         <div class="layout-topbar-logo-container">
-            <button class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
+            <button *ngIf="false" class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
                 <i class="pi pi-bars"></i>
             </button>
             <a class="layout-topbar-logo" routerLink="/">
@@ -33,7 +33,7 @@ import { LayoutService } from '../service/layout.service';
                         />
                     </g>
                 </svg>
-                <span>SAKAI</span>
+                <span>AR</span>
             </a>
         </div>
 
@@ -62,7 +62,7 @@ import { LayoutService } from '../service/layout.service';
                 <i class="pi pi-ellipsis-v"></i>
             </button>
 
-            <div class="layout-topbar-menu hidden lg:block">
+            <div *ngIf="false" class="layout-topbar-menu hidden lg:block">
                 <div class="layout-topbar-menu-content">
                     <button type="button" class="layout-topbar-action">
                         <i class="pi pi-calendar"></i>
