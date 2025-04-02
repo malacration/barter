@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, resource } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, resource } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
@@ -21,7 +21,7 @@ import { DividerModule } from 'primeng/divider';
 import { Cartao, Taxa } from './cartao';
 import { BarterService } from '../_services/barter.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { interval } from 'rxjs';
+import { interval, Observable, Subscription } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
 
 
@@ -50,7 +50,7 @@ import { startWith, switchMap } from 'rxjs/operators';
   styleUrl: './barter.component.scss',
   providers: [CountryService, NodeService,BarterService]
 })
-export class BarterComponent implements OnInit {
+export class BarterComponent implements OnInit, OnDestroy{
 
   constructor(private service : BarterService) {
     (window as any).enableDebug = () => {
@@ -62,20 +62,28 @@ export class BarterComponent implements OnInit {
       this.visualizaCalculo = false;
       console.log('Debug Mode DESATIVADO!');
     };
-    service.getPreco()
+    service.getPreco("")
   }
 
   loading = true
   erroMessage? : string
+  subscription? : Subscription
 
   ngOnInit(): void {
+    this.changeItem(null)
+  }
+
+  changeItem($event: any) {
+    if(this.subscription)
+      this.subscription.unsubscribe()
+
     let intervalo = 1800000  // 30 minutos em milissegundos
-    interval(intervalo)
+    this.subscription = interval(intervalo)
       .pipe(
         startWith(0), // Faz a requisição imediatamente ao iniciar o componente
         switchMap(() => {
           this.loading = true; // Ativa o loading antes da requisição iniciar
-          return this.service.getPreco();
+          return this.service.getPreco(this.itemBarterSelecionado);
         })
       )
       .subscribe({
@@ -93,14 +101,19 @@ export class BarterComponent implements OnInit {
         }
       });
   }
-  
+
+  getItemLabel(): string {
+    const selectedItem = this.itensBarter.find(item => item.value == this.itemBarterSelecionado);
+    return selectedItem ? selectedItem.label : 'Item não encontrado';
+  }
+
+  itemBarterSelecionado: string = 'GRA0000004';
 
   visualizaCalculo = false
 
   jurosAoMes = 0.013
   dolar = 5.70
   valorSaco = 125
-  
 
   valorPrincipal : number = 0
   valorEntrada : number = 0
@@ -129,6 +142,17 @@ export class BarterComponent implements OnInit {
     { value: 11, label: '11x' },
     { value: 12, label: '12x' },
   ];
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
+  itensBarter = [
+    { value: 'INS0000015', label: 'MILHO'},
+    { value: 'GRA0000004', label: 'SOJA'}
+  ]
 
   numParcelaEntradaCartao : number = 0
   

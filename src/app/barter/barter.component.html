@@ -7,6 +7,11 @@
 <div *ngIf="!loading" class="card flex flex-col gap-6 w-full">
     <div class="font-semibold text-xl">Calculadora Barter</div>
     <div class="flex flex-col md:flex-row gap-6">
+        <p-select 
+        (onChange)="changeItem($event)"
+        [(ngModel)]="itemBarterSelecionado"
+        [style]="{'border': 'none', 'box-shadow': 'none', 'outline': 'none'}"
+        [options]="itensBarter" optionLabel="label" optionValue="value" placeholder="Item do Barter" />
         <p-inputgroup>
             <p-floatlabel variant="on">
                 <p-inputNumber [(ngModel)]="valorPrincipal" (ngModelChange)="changeValorPrincipal()" mode="currency" currency="BRL" locale="pt-BR"></p-inputNumber>
@@ -112,7 +117,7 @@
                     </div>
                     <div class="flex justify-between gap-4">
                         <span class="font-semibold"><b>
-                            Sacas de soja entregue em {{ dataEntrega | date:'dd/MM/yyyy' }}
+                            Sacas de {{getItemLabel()}} entregue em {{ dataEntrega | date:'dd/MM/yyyy' }}
                             {{visualizaCalculo ? 'R$ '+valorSaco+' ' : ''}}:
                         </b></span>
                         <span>{{getNumeroSacos().toFixed(0)}}</span>

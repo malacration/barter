@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ConfigService } from './config.service';
 
@@ -13,9 +13,9 @@ export class BarterService {
     this.apiUrl = config.apiUrl+"/barter"
   }
 
-  // Método para buscar dados do backend
-  getPreco(): Observable<any> {
-    let url = this.apiUrl+"/"
-    return this.http.get<any>(this.apiUrl);
-  }
+  getPreco(produto: string): Observable<any> {
+    let params = new HttpParams().set('itemCode', produto);
+    let url = `${this.apiUrl}`;
+    return this.http.get<any>(url, { params });
+}
 }
