@@ -1,7 +1,6 @@
 name: Deploy Angular App
 
 on:
-  workflow_dispatch:
   release:
     types: [ created ]
 
