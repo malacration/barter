@@ -27,8 +27,8 @@ jobs:
 
     - name: Archive build artifacts
       run: |
-        cd dist
-        zip -r ../build.zip .
+        cd dist/barter/browser
+        zip -r ./build.zip .
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
@@ -36,6 +36,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./build.zip
+        asset_path: ./dist/barter/browser/build.zip
         asset_name: build.zip
         asset_content_type: application/zip

@@ -1,5 +1,5 @@
 {
-    "name": "sakai-ng",
+    "name": "barter",
     "version": "19.0.0",
     "scripts": {
         "ng": "ng",
