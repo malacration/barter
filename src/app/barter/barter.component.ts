@@ -44,6 +44,7 @@ import { startWith, switchMap } from 'rxjs/operators';
     InputGroupAddonModule,
     DividerModule,
     SelectModule,
+    RadioButtonModule,
     ProgressBarModule,
   ],
   templateUrl: './barter.component.html',
@@ -68,6 +69,13 @@ export class BarterComponent implements OnInit, OnDestroy{
   loading = true
   erroMessage? : string
   subscription? : Subscription
+  seguro : number = 0
+
+  retencaoTipo : string = 'funrural'
+
+  getTaxaRetencao() : number {
+    return this.retencaoTipo  == 'funrural' ? 0.015 : 0.0002
+  }
 
   ngOnInit(): void {
     this.changeItem(null)
@@ -111,7 +119,7 @@ export class BarterComponent implements OnInit, OnDestroy{
 
   visualizaCalculo = false
 
-  jurosAoMes = 0.013
+  jurosAoMes = 0.015
   dolar = 5.70
   valorSaco = 125
 
@@ -168,7 +176,7 @@ export class BarterComponent implements OnInit, OnDestroy{
   }
 
   getValorFinanciar(): number {
-    return (this.getCustoAntecipacao() + (this.valorPrincipal) + this.valorEncargos + this.getEncargosCartao() - (this.valorEntrada+this.valorEntradaParcelado));
+    return this.seguro+(this.getCustoAntecipacao() + (this.valorPrincipal) + this.valorEncargos + this.getEncargosCartao() - (this.valorEntrada+this.valorEntradaParcelado));
   }
 
   getMesesPrazo(){
@@ -211,10 +219,20 @@ export class BarterComponent implements OnInit, OnDestroy{
     return montanteCustoAntecipacao
   }
 
+  getValorRetencao() : number{
+    return this.getMontanteFinal()*this.getTaxaRetencao()
+  }
+
   getMontanteFinal(): number {
     const meses = this.getMesesPrazo()
     const valorFinanciar = this.getValorFinanciar();
-    return valorFinanciar * Math.pow(1 + this.jurosAoMes, meses);
+    return (valorFinanciar * Math.pow(1 + this.jurosAoMes, meses))/(1-this.getTaxaRetencao());
+  }
+
+  getMontanteFinalSemRetencoes(): number {
+    const meses = this.getMesesPrazo()
+    const valorFinanciar = this.getValorFinanciar();
+    return (valorFinanciar * Math.pow(1 + this.jurosAoMes, meses));
   }
 
   getNumeroSacos() : number{

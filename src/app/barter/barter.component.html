@@ -10,7 +10,6 @@
         <p-select 
         (onChange)="changeItem($event)"
         [(ngModel)]="itemBarterSelecionado"
-        [style]="{'border': 'none', 'box-shadow': 'none', 'outline': 'none'}"
         [options]="itensBarter" optionLabel="label" optionValue="value" placeholder="Item do Barter" />
         <p-inputgroup>
             <p-floatlabel variant="on">
@@ -21,7 +20,16 @@
         <p-inputgroup>
             <p-floatlabel variant="on">
                 <p-inputNumber [(ngModel)]="valorEncargos" mode="currency" currency="BRL" locale="pt-BR"></p-inputNumber>
-                <label for="valorEncargos">Outros Encargos (seguro, emplacamento etc..)</label>
+                <label for="valorEncargos">Encargos e acessórios</label>
+            </p-floatlabel>
+        </p-inputgroup>
+    </div>
+
+    <div class="flex flex-col md:flex-row gap-6">
+        <p-inputgroup>
+            <p-floatlabel variant="on">
+                <p-inputNumber [(ngModel)]="seguro" mode="currency" currency="BRL" locale="pt-BR"></p-inputNumber>
+                <label for="seguro">Seguro</label>
             </p-floatlabel>
         </p-inputgroup>
         <div class="w-full md:flex-row md:w-1/3">
@@ -30,7 +38,21 @@
                 <label for="dataEntrega">Data Entrega</label>
             </p-floatlabel>
         </div>
+        <div class="flex items-center gap-4">
+            <label class="font-semibold whitespace-nowrap">Opção de Recolhimento:</label>
+    
+            <div class="flex items-center">
+                <p-radiobutton name="recolhimento" value="funrural" [(ngModel)]="retencaoTipo" inputId="funrural" />
+                <label for="funrural" class="ml-2">FUNRURAL</label>
+            </div>
+    
+            <div class="flex items-center">
+                <p-radiobutton name="recolhimento" value="comercializacao" [(ngModel)]="retencaoTipo" inputId="comercializacao" />
+                <label for="comercializacao" class="ml-2">Comercialização</label>
+            </div>
+        </div>
     </div>
+
     
     <div class="flex flex-col md:flex-row gap-6">
         <div class="flex flex-col flex-1">
@@ -103,6 +125,10 @@
                         <span>{{valorEncargos | currency:'BRL' }}</span>
                     </div>
                     <div *ngIf="visualizaCalculo" class="flex justify-between gap-4">
+                        <span class="font-semibold">Seguro</span>
+                        <span>{{seguro | currency:'BRL' }}</span>
+                    </div>
+                    <div *ngIf="visualizaCalculo" class="flex justify-between gap-4">
                         <span class="font-semibold">Residual do bem</span>
                         <span>{{getResidualPrincipal().toFixed(2) | currency:'BRL' }}</span>
                     </div>
@@ -113,7 +139,15 @@
                     <p-divider *ngIf="visualizaCalculo" />
                     <div *ngIf="visualizaCalculo" class="flex justify-between gap-4">
                         <span class="font-semibold"><b>Total com juros ({{jurosAoMes*100}}% ao mes)</b></span>
-                        <span>{{getMontanteFinal().toFixed(2) | currency:'BRL'}}</span>
+                        <span>{{getMontanteFinalSemRetencoes().toFixed(2) | currency:'BRL'}}</span>
+                    </div>
+                    <div *ngIf="visualizaCalculo" class="flex justify-between gap-4">
+                        <span class="font-semibold">Retenção - {{getTaxaRetencao()*100}}%</span>
+                        <span>{{getValorRetencao() | currency:'BRL' }}</span>
+                    </div>
+                    <div *ngIf="visualizaCalculo" class="flex justify-between gap-4">
+                        <span class="font-semibold"><b>Total Geral</b></span>
+                        <span><b>{{getMontanteFinal().toFixed(2) | currency:'BRL'}}</b></span>
                     </div>
                     <div class="flex justify-between gap-4">
                         <span class="font-semibold"><b>
