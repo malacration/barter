@@ -172,7 +172,7 @@ export class BarterComponent implements OnInit, OnDestroy{
   get percentualEntrada() : number{
     if(!this.valorPrincipal)
       return 0
-    return Math.trunc((this.valorEntrada+this.valorEntradaParcelado)/((this.valorPrincipal ?? 0))*100);
+    return Math.trunc((this.valorEntrada+this.valorEntradaParcelado)/((this.valorPrincipal??0)+(this.valorEncargos??0))*100);
   }
 
   getValorFinanciar(): number {
@@ -251,13 +251,20 @@ export class BarterComponent implements OnInit, OnDestroy{
   //adicao de cartao de credito mais entrada a vista mais selecao de numero de parcelas - Encargo
   //Data entrega
 
+  valorMinimoEntrada(){
+    return (this.valorPrincipal??0)*0.20+(this.valorEncargos ?? 0)
+  }
+
+  perncentualMinimo(){
+    return Math.trunc((((this.valorPrincipal??0)*0.20)+(this.valorEncargos ?? 0))/((this.valorPrincipal??0)+(this.valorEncargos ?? 0))*100)
+  }
 
   percentualEdit($event : string){
     this.valorEntrada = this.valorPrincipal??0/Number($event)
   }
 
-  changeValorPrincipal(){
-    this.valorEntrada = (this.valorPrincipal??0)*0.20
+  changeBaseEntrada(){
+    this.valorEntrada = this.valorMinimoEntrada()
   }
 
   changeEntradaDinheiro(){
@@ -266,7 +273,7 @@ export class BarterComponent implements OnInit, OnDestroy{
   }
 
   isFormularioValido() : boolean{
-    return this.percentualEntrada >= 20 && this.isParceladoValido()
+    return this.percentualEntrada >= this.perncentualMinimo() && this.isParceladoValido()
   }
 
   isParceladoValido(){
