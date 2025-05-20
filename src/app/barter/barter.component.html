@@ -148,6 +148,10 @@
                         <span class="font-semibold"><b>Total Geral</b></span>
                         <span><b>{{getMontanteFinal().toFixed(2) | currency:'BRL'}}</b></span>
                     </div>
+                    <div *ngIf="visualizaCalculo" class="flex justify-between gap-4">
+                        <span class="font-semibold"><b>Valor arredondamento (tragedia dos inteiros)</b></span>
+                        <span><b>{{arredondamento().toFixed(2) | currency:'BRL'}}</b></span>
+                    </div>
                     <div class="flex justify-between gap-4">
                         <span class="font-semibold"><b>
                             Sacas de {{getItemLabel()}} entregue em {{ dataEntrega | date:'dd/MM/yyyy' }}

@@ -124,7 +124,16 @@ export class BarterComponent implements OnInit, OnDestroy{
   valorSaco = 125
 
   valorPrincipal : number = 0
-  valorEntrada : number = 0
+  private _valorEntrada : number = 0
+  
+  get valorEntrada(): number { return this._valorEntrada; }
+  
+  set valorEntrada(value: number | null | undefined) {
+    const v = Number(value) || 0;
+    const factor = 100;
+    this._valorEntrada = Math.ceil(v * factor - 1e-9) / factor;
+  }
+  
   valorEntradaParcelado : number = 0
   valorEncargos = 0
   dataEntrega : Date = new Date(2026, 2)
@@ -224,9 +233,7 @@ export class BarterComponent implements OnInit, OnDestroy{
   }
 
   getMontanteFinal(): number {
-    const meses = this.getMesesPrazo()
-    const valorFinanciar = this.getValorFinanciar();
-    return (valorFinanciar * Math.pow(1 + this.jurosAoMes, meses))/(1-this.getTaxaRetencao());
+    return this.getMontanteFinalSemRetencoes()/(1-this.getTaxaRetencao());
   }
 
   getMontanteFinalSemRetencoes(): number {
@@ -235,8 +242,18 @@ export class BarterComponent implements OnInit, OnDestroy{
     return (valorFinanciar * Math.pow(1 + this.jurosAoMes, meses));
   }
 
-  getNumeroSacos() : number{
-    return this.getMontanteFinal()/this.valorSaco
+  getNumeroSacosSemArredondamento() : number{
+    return Math.ceil(this.getMontanteFinal() / this.valorSaco);
+  }
+
+  getNumeroSacos(){
+    if(this.arredondamento() < 0)
+      return this.getNumeroSacosSemArredondamento()+1
+    return this.getNumeroSacosSemArredondamento()
+  }
+
+  arredondamento() : number{
+    return this.getMontanteFinal()-(this.getNumeroSacosSemArredondamento()*this.valorSaco)
   }
 
   getResidualPrincipal() : number{
