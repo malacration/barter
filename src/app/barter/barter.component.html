@@ -28,7 +28,7 @@
     <div class="flex flex-col md:flex-row gap-6">
         <p-inputgroup>
             <p-floatlabel variant="on">
-                <p-inputNumber [(ngModel)]="seguro" mode="currency" currency="BRL" locale="pt-BR"></p-inputNumber>
+                <p-inputNumber [(ngModel)]="seguro" mode="currency" (ngModelChange)="changeBaseEntrada()" currency="BRL" locale="pt-BR"></p-inputNumber>
                 <label for="seguro">Seguro</label>
             </p-floatlabel>
         </p-inputgroup>

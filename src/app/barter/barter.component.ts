@@ -185,7 +185,7 @@ export class BarterComponent implements OnInit, OnDestroy{
   }
 
   getValorFinanciar(): number {
-    return this.seguro+(this.getCustoAntecipacao() + (this.valorPrincipal) + this.valorEncargos + this.getEncargosCartao() - (this.valorEntrada+this.valorEntradaParcelado));
+    return (this.getCustoAntecipacao() + (this.valorPrincipal) + this.valorEncargos + this.getEncargosCartao() - (this.valorEntrada+this.valorEntradaParcelado));
   }
 
   getMesesPrazo(){
@@ -269,11 +269,11 @@ export class BarterComponent implements OnInit, OnDestroy{
   //Data entrega
 
   valorMinimoEntrada(){
-    return (this.valorPrincipal??0)*0.20+(this.valorEncargos ?? 0)
+    return (this.valorPrincipal??0)*0.20+(this.valorEncargos ?? 0)+(this.seguro ?? 0)
   }
 
   perncentualMinimo(){
-    return Math.trunc((((this.valorPrincipal??0)*0.20)+(this.valorEncargos ?? 0))/((this.valorPrincipal??0)+(this.valorEncargos ?? 0))*100)
+    return Math.trunc((((this.valorPrincipal??0)*0.20)+(this.valorEncargos ?? 0)+(this.seguro ?? 0))/((this.valorPrincipal??0)+(this.valorEncargos ?? 0)+(this.seguro ?? 0))*100)
   }
 
   percentualEdit($event : string){
