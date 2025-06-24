@@ -7,10 +7,16 @@
 <div *ngIf="!loading" class="card flex flex-col gap-6 w-full">
     <div class="font-semibold text-xl">Calculadora Barter</div>
     <div class="flex flex-col md:flex-row gap-6">
+        
+        <p-select
+            [(ngModel)]="tipoVeiculoSelecionada"
+            [options]="tiposVeiculos" optionLabel="label" optionValue="value" placeholder="Tipo Veiculo" />
+
         <p-select 
         (onChange)="changeItem($event)"
         [(ngModel)]="itemBarterSelecionado"
         [options]="itensBarter" optionLabel="label" optionValue="value" placeholder="Item do Barter" />
+
         <p-inputgroup>
             <p-floatlabel variant="on">
                 <p-inputNumber [(ngModel)]="valorPrincipal" (ngModelChange)="changeBaseEntrada()" mode="currency" currency="BRL" locale="pt-BR"></p-inputNumber>
@@ -54,7 +60,7 @@
     </div>
 
     
-    <div class="flex flex-col md:flex-row gap-6">
+    <div class="flex flex-col md:flex-row gap-6" *ngIf="isVeiculoLeve()">
         <div class="flex flex-col flex-1">
             <p-inputgroup>
                 <p-floatlabel variant="on">

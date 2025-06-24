@@ -71,6 +71,13 @@ export class BarterComponent implements OnInit, OnDestroy{
   subscription? : Subscription
   seguro : number = 0
 
+  tipoVeiculoSelecionada = "leve"
+
+  tiposVeiculos = [
+    { value: 'leve', label: 'Leve'},
+    { value: 'pesado', label: 'Pesado'}
+  ]
+
   retencaoTipo : string = 'funrural'
 
   getTaxaRetencao() : number {
@@ -113,6 +120,10 @@ export class BarterComponent implements OnInit, OnDestroy{
   getItemLabel(): string {
     const selectedItem = this.itensBarter.find(item => item.value == this.itemBarterSelecionado);
     return selectedItem ? selectedItem.label : 'Item não encontrado';
+  }
+
+  isVeiculoLeve() : boolean{
+    return this.tipoVeiculoSelecionada == "leve"
   }
 
   itemBarterSelecionado: string = 'GRA0000004';
@@ -290,7 +301,7 @@ export class BarterComponent implements OnInit, OnDestroy{
   }
 
   isFormularioValido() : boolean{
-    return this.percentualEntrada >= this.perncentualMinimo() && this.isParceladoValido()
+    return (this.percentualEntrada >= this.perncentualMinimo() && this.isParceladoValido()) || !this.isVeiculoLeve()
   }
 
   isParceladoValido(){
