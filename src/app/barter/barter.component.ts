@@ -130,7 +130,7 @@ export class BarterComponent implements OnInit, OnDestroy{
 
   visualizaCalculo = false
 
-  jurosAoMes = 0.015
+  jurosAoMes = 0.025
   dolar = 5.70
   valorSaco = 125
 
@@ -280,7 +280,10 @@ export class BarterComponent implements OnInit, OnDestroy{
   //Data entrega
 
   valorMinimoEntrada(){
-    return (this.valorPrincipal??0)*0.20+(this.valorEncargos ?? 0)+(this.seguro ?? 0)
+    if(this.isVeiculoLeve())
+      return (this.valorPrincipal??0)*0.20+(this.valorEncargos ?? 0)+(this.seguro ?? 0)
+    else
+      return 0
   }
 
   perncentualMinimo(){
